@@ -35,4 +35,29 @@ test.describe('Registration and Login Flow', () => {
       await oidcLoginPage.login(user.username, user.password);
     });
   });
+
+  test('should fail to log in with wrong password', async ({
+    registerPage,
+    portalLoginPage,
+    oidcLoginPage,
+  }) => {
+    const user = generateUniqueUser();
+
+    await test.step('Register a new user on OBP Portal', async () => {
+      await registerPage.goto();
+      await registerPage.fillRegistrationForm(user);
+      await registerPage.acceptLegalDocuments();
+      await registerPage.submit();
+      await registerPage.verifySuccess();
+    });
+
+    await test.step('Attempt login with wrong password', async () => {
+      await portalLoginPage.goto();
+      await oidcLoginPage.waitForLoginPage();
+      await oidcLoginPage.login(user.username, 'WrongPassword!999');
+
+      const hasError = await oidcLoginPage.hasError();
+      expect(hasError).toBe(true);
+    });
+  });
 });
