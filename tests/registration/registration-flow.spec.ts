@@ -29,8 +29,8 @@ test.describe('Registration and Login Flow', () => {
     });
 
     await test.step('Log in on OBP Portal with new credentials', async () => {
-      await portalLoginPage.waitForLoginPage();
-      await portalLoginPage.selectProvider();
+      await portalLoginPage.goto();
+      // Portal auto-redirects to OBP-OIDC login page (single provider)
       await oidcLoginPage.waitForLoginPage();
       await oidcLoginPage.login(user.username, user.password);
     });

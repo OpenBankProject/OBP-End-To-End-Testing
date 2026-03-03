@@ -7,7 +7,7 @@
     "test:headed": "npx playwright test --headed",
     "test:debug": "npx playwright test --debug",
     "test:vrp": "npx playwright test tests/vrp/",
-    "test:registration": "npx playwright test tests/registration-and-metrics/",
+    "test:registration": "npx playwright test tests/registration/",
     "report": "npx playwright show-report"
   },
   "devDependencies": {

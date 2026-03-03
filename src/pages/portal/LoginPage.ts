@@ -9,6 +9,10 @@ export class LoginPage extends BasePage {
     super(page);
   }
 
+  async goto() {
+    await this.navigateTo(`${env.OBP_PORTAL_BASE_URL}/login`);
+  }
+
   async waitForLoginPage() {
     await this.waitForUrlContaining('/login');
   }
