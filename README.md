@@ -88,11 +88,17 @@ When `authUser.skipEmailValidation=true` (the default), the "skip validation" an
 # Run all tests
 npm test
 
-# Run registration tests (includes email validation)
-npm run test:registration
+# Run all authentication tests (registration + password reset, via OBP-OIDC)
+npm run test:obp-oidc
 
-# Run password reset tests
-npm run test:password-reset
+# Run registration tests only (login via OBP-OIDC)
+npm run test:registration-obp-oidc
+
+# Run password reset tests only (login via OBP-OIDC)
+npm run test:password-reset-obp-oidc
+
+# Or use the shell script (starts Mailpit automatically)
+./run-authentication-tests.sh
 
 # Run VRP consent flow tests
 npm run test:vrp
@@ -123,23 +129,23 @@ src/
   fixtures/
     test-fixtures.ts     - Custom Playwright fixtures
 tests/
-  registration/          - Registration, email validation, and login tests
-  password-reset/        - Password reset via email tests
-  entitlement-granting/  - Super admin entitlement granting tests
-  vrp/                   - VRP consent creation tests
+  registration-obp-oidc/    - Registration, email validation, and login via OBP-OIDC
+  password-reset-obp-oidc/  - Password reset via email, login via OBP-OIDC
+  entitlement-granting/     - Super admin entitlement granting tests
+  vrp/                      - VRP consent creation tests
 ```
 
 ## Test flows
 
-### Registration and email validation
+### Registration and email validation (login via OBP-OIDC)
 
 1. Register a new user on OBP-Portal
 2. Retrieve the validation email from Mailpit
 3. Extract the JWT validation token from the email
 4. Navigate to the Portal validation page with the token
-5. Verify validation succeeds, then log in
+5. Verify validation succeeds, then log in via OBP-OIDC
 
-### Password reset
+### Password reset (login via OBP-OIDC)
 
 1. Register and validate a new user (via Mailpit)
 2. Navigate to `/forgot-password`, enter username and email

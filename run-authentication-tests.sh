@@ -22,5 +22,5 @@ else
   done
 fi
 
-echo "Running authentication tests (registration + password reset)..."
-npx playwright test tests/registration/ tests/password-reset/ "$@"
+echo "Running authentication tests (registration + password reset via OBP-OIDC)..."
+npx playwright test tests/registration-obp-oidc/ tests/password-reset-obp-oidc/ "$@"

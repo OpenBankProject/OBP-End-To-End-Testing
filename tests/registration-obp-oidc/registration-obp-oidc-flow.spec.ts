@@ -11,7 +11,7 @@ function generateUniqueUser() {
   };
 }
 
-test.describe('Registration and Login Flow', () => {
+test.describe('Registration and Login Flow (OBP-OIDC)', () => {
   test('should register, validate email via Mailpit, and log in', async ({
     registerPage,
     emailValidationPage,

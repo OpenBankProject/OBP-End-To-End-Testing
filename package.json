@@ -7,9 +7,9 @@
     "test:headed": "npx playwright test --headed",
     "test:debug": "npx playwright test --debug",
     "test:vrp": "npx playwright test tests/vrp/",
-    "test:registration": "npx playwright test tests/registration/",
-    "test:password-reset": "npx playwright test tests/password-reset/",
-    "test:auth": "npx playwright test tests/registration/ tests/password-reset/",
+    "test:obp-oidc": "npx playwright test tests/registration-obp-oidc/ tests/password-reset-obp-oidc/",
+    "test:registration-obp-oidc": "npx playwright test tests/registration-obp-oidc/",
+    "test:password-reset-obp-oidc": "npx playwright test tests/password-reset-obp-oidc/",
     "test:ui": "npx playwright test --ui --headed",
     "report": "npx playwright show-report"
   },

@@ -11,7 +11,7 @@ function generateUniqueUser() {
   };
 }
 
-test.describe('Password Reset Flow', () => {
+test.describe('Password Reset Flow (OBP-OIDC)', () => {
   test('should register, validate, then reset password via email and log in with new password', async ({
     registerPage,
     emailValidationPage,
