@@ -9,6 +9,11 @@ import { RegisterPage } from '../pages/portal/RegisterPage.js';
 import { ApiManagerLoginPage } from '../pages/api-manager/ApiManagerLoginPage.js';
 import { MetricsPage } from '../pages/api-manager/MetricsPage.js';
 import { ProfilePage } from '../pages/api-manager/ProfilePage.js';
+import { CreateEntitlementPage } from '../pages/api-manager/CreateEntitlementPage.js';
+import { EmailValidationPage } from '../pages/portal/EmailValidationPage.js';
+import { ForgotPasswordPage } from '../pages/portal/ForgotPasswordPage.js';
+import { ResetPasswordPage } from '../pages/portal/ResetPasswordPage.js';
+import { MailpitClient } from '../helpers/MailpitClient.js';
 
 type TestFixtures = {
   vrpFormPage: VrpFormPage;
@@ -21,6 +26,11 @@ type TestFixtures = {
   apiManagerLoginPage: ApiManagerLoginPage;
   metricsPage: MetricsPage;
   profilePage: ProfilePage;
+  createEntitlementPage: CreateEntitlementPage;
+  emailValidationPage: EmailValidationPage;
+  forgotPasswordPage: ForgotPasswordPage;
+  resetPasswordPage: ResetPasswordPage;
+  mailpit: MailpitClient;
 };
 
 export const test = base.extend<TestFixtures>({
@@ -53,6 +63,21 @@ export const test = base.extend<TestFixtures>({
   },
   profilePage: async ({ page }, use) => {
     await use(new ProfilePage(page));
+  },
+  createEntitlementPage: async ({ page }, use) => {
+    await use(new CreateEntitlementPage(page));
+  },
+  emailValidationPage: async ({ page }, use) => {
+    await use(new EmailValidationPage(page));
+  },
+  forgotPasswordPage: async ({ page }, use) => {
+    await use(new ForgotPasswordPage(page));
+  },
+  resetPasswordPage: async ({ page }, use) => {
+    await use(new ResetPasswordPage(page));
+  },
+  mailpit: async ({}, use) => {
+    await use(new MailpitClient());
   },
 });
 

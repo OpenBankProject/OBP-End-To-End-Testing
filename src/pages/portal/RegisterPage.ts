@@ -9,8 +9,8 @@ export class RegisterPage extends BasePage {
   private usernameInput = this.page.locator('input[name="username"]');
   private passwordInput = this.page.locator('input[name="password"]');
   private repeatPasswordInput = this.page.locator('input[name="repeat_password"]');
-  private submitButton = this.page.locator('button[aria-label="submit"]');
-  private errorMessage = this.page.locator('.error');
+  private submitButton = this.page.locator('[data-testid="submit-registration"]');
+  private errorMessage = this.page.locator('[data-testid="registration-error"]');
 
   constructor(page: Page) {
     super(page);
@@ -41,14 +41,16 @@ export class RegisterPage extends BasePage {
   }
 
   private async readAndAcceptDocument(documentName: string) {
-    // Find the specific row: the div.flex that contains this document's label span
-    const label = this.page.locator('span.text-sm.font-medium', { hasText: documentName });
-    const row = label.locator('xpath=ancestor::div[contains(@class,"flex items-center justify-between")]');
-    await row.locator('button[data-dialog-trigger]').click();
+    const docMap: Record<string, string> = {
+      'Terms of Service': 'webui_terms_and_conditions',
+      'Privacy Policy': 'webui_privacy_policy',
+    };
+    const trigger = this.page.locator(`[data-testid="legal-trigger-${docMap[documentName]}"]`);
+    await trigger.scrollIntoViewIfNeeded();
+    await trigger.click();
 
-    // Click "I Accept" inside the modal dialog
-    const acceptButton = this.page.locator('button', { hasText: 'I Accept' });
-    await acceptButton.waitFor({ state: 'visible', timeout: 10_000 });
+    const acceptButton = this.page.locator('[data-testid="legal-accept"]');
+    await acceptButton.waitFor({ state: 'visible', timeout: 15_000 });
     await acceptButton.click();
     await acceptButton.waitFor({ state: 'hidden', timeout: 10_000 });
   }

@@ -39,6 +39,13 @@ export const env = {
   VRP_MAX_YEARLY_FREQUENCY: optional('VRP_MAX_YEARLY_FREQUENCY', '100'),
   VRP_MAX_NUMBER_OF_HISTORICAL_CONSENTS_SHOWN: optional('VRP_MAX_NUMBER_OF_HISTORICAL_CONSENTS_SHOWN', '10'),
 
+  // Super Admin credentials (for entitlement granting tests)
+  SUPER_ADMIN_USERNAME: optional('SUPER_ADMIN_USERNAME', 'TheSuperUserAForTesting'),
+  SUPER_ADMIN_PASSWORD: optional('SUPER_ADMIN_PASSWORD', ''),
+
+  // Mailpit (email testing)
+  MAILPIT_API_URL: optional('MAILPIT_API_URL', 'http://localhost:8025'),
+
   // OTP
   TEST_OTP_VALUE: optional('TEST_OTP_VALUE', '123456'),
 };

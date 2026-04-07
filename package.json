@@ -8,6 +8,9 @@
     "test:debug": "npx playwright test --debug",
     "test:vrp": "npx playwright test tests/vrp/",
     "test:registration": "npx playwright test tests/registration/",
+    "test:password-reset": "npx playwright test tests/password-reset/",
+    "test:auth": "npx playwright test tests/registration/ tests/password-reset/",
+    "test:ui": "npx playwright test --ui --headed",
     "report": "npx playwright show-report"
   },
   "devDependencies": {
