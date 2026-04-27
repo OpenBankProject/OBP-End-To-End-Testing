@@ -8,6 +8,7 @@
     "test:debug": "npx playwright test --debug",
     "test:vrp": "npx playwright test tests/vrp/",
     "test:obp-oidc": "npx playwright test tests/registration-obp-oidc/ tests/password-reset-obp-oidc/",
+    "test:create-bank": "npx playwright test tests/create-bank/",
     "test:registration-obp-oidc": "npx playwright test tests/registration-obp-oidc/",
     "test:password-reset-obp-oidc": "npx playwright test tests/password-reset-obp-oidc/",
     "test:ui": "npx playwright test --ui --headed",

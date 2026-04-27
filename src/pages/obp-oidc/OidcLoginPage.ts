@@ -21,24 +21,38 @@ export class OidcLoginPage extends BasePage {
   async login(
     username = env.OBP_LOGIN_USERNAME,
     password = env.OBP_LOGIN_PASSWORD,
-    provider = env.OBP_LOGIN_PROVIDER,
+    credentialsProvider = env.OIDC_LOGIN_PROVIDER,
   ) {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
 
-    // Provider may be a <select> or a hidden input depending on config
-    // Provider may be a <select>, a hidden input, or already set by the redirect
+    // The credentials-provider dropdown identifies WHERE this user's credentials
+    // are stored (e.g. an OBP-API host URL). Labels are typically full URLs, so we
+    // match `credentialsProvider` as a case-insensitive substring of the label.
     const selectVisible = await this.providerSelect.isVisible();
     if (selectVisible) {
-      const options = await this.providerSelect.locator('option').allTextContents();
-      const hasProvider = options.some(opt => opt.trim() === provider);
-      if (hasProvider) {
-        await this.providerSelect.selectOption({ label: provider });
+      const options = (await this.providerSelect.locator('option').allTextContents()).map(o => o.trim());
+      const needle = credentialsProvider.toLowerCase();
+      const matches = options.filter(opt => opt.toLowerCase().includes(needle));
+      if (matches.length === 1) {
+        await this.providerSelect.selectOption({ label: matches[0] });
+      } else if (matches.length > 1) {
+        throw new Error(
+          `Credentials provider "${credentialsProvider}" matches multiple options: ${matches.join(', ')}. ` +
+          `Set <USER>_CREDENTIALS_PROVIDER to a more specific value.`,
+        );
+      } else {
+        throw new Error(
+          `Credentials provider "${credentialsProvider}" not found in options: ${options.join(', ')}. ` +
+          `Set <USER>_CREDENTIALS_PROVIDER to match (substring of) one of these.`,
+        );
       }
-      // If provider not in options, it may already be pre-selected by the redirect
     }
 
-    await this.signInButton.click();
+    await Promise.all([
+      this.page.waitForURL(url => !url.pathname.includes('/obp-oidc/auth'), { timeout: 5_000 }),
+      this.signInButton.click(),
+    ]);
   }
 
   async hasError(): Promise<boolean> {

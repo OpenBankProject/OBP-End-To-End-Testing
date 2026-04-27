@@ -17,7 +17,7 @@ export class LoginPage extends BasePage {
     await this.waitForUrlContaining('/login');
   }
 
-  async selectProvider(provider = env.OBP_LOGIN_PROVIDER) {
+  async selectProvider(provider = env.OIDC_LOGIN_PROVIDER) {
     const providerLink = this.page.locator(`a[href="/login/${provider}"]`);
     await providerLink.click();
   }

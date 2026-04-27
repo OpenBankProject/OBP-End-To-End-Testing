@@ -10,6 +10,7 @@ import { ApiManagerLoginPage } from '../pages/api-manager/ApiManagerLoginPage.js
 import { MetricsPage } from '../pages/api-manager/MetricsPage.js';
 import { ProfilePage } from '../pages/api-manager/ProfilePage.js';
 import { CreateEntitlementPage } from '../pages/api-manager/CreateEntitlementPage.js';
+import { CreateBankPage } from '../pages/api-manager/CreateBankPage.js';
 import { EmailValidationPage } from '../pages/portal/EmailValidationPage.js';
 import { ForgotPasswordPage } from '../pages/portal/ForgotPasswordPage.js';
 import { ResetPasswordPage } from '../pages/portal/ResetPasswordPage.js';
@@ -27,6 +28,7 @@ type TestFixtures = {
   metricsPage: MetricsPage;
   profilePage: ProfilePage;
   createEntitlementPage: CreateEntitlementPage;
+  createBankPage: CreateBankPage;
   emailValidationPage: EmailValidationPage;
   forgotPasswordPage: ForgotPasswordPage;
   resetPasswordPage: ResetPasswordPage;
@@ -66,6 +68,9 @@ export const test = base.extend<TestFixtures>({
   },
   createEntitlementPage: async ({ page }, use) => {
     await use(new CreateEntitlementPage(page));
+  },
+  createBankPage: async ({ page }, use) => {
+    await use(new CreateBankPage(page));
   },
   emailValidationPage: async ({ page }, use) => {
     await use(new EmailValidationPage(page));

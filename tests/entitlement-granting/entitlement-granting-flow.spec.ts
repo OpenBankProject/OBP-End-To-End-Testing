@@ -18,7 +18,7 @@ function generateUniqueUser() {
 }
 
 test.describe('Entitlement Granting Flow', () => {
-  test('User A (super admin) grants CanReadMetrics to User B', async ({
+  test('Powerful User 1 grants CanReadMetrics to User B', async ({
     registerPage,
     browser,
   }) => {
@@ -44,7 +44,6 @@ test.describe('Entitlement Granting Flow', () => {
       const profilePage = new ProfilePage(userBPage);
 
       await apiManagerLogin.goto();
-      await apiManagerLogin.selectProvider();
       await oidcLogin.waitForLoginPage();
       await oidcLogin.login(userB.username, userB.password);
 
@@ -65,21 +64,21 @@ test.describe('Entitlement Granting Flow', () => {
       expect(hasMissingRole).toBe(true);
     });
 
-    // ── Step 4: Log in as User A (super admin) in separate context ─
+    // ── Step 4: Log in as Powerful User 1 in separate context ─────
     const userAContext = await browser.newContext();
     const userAPage = await userAContext.newPage();
 
-    await test.step('Log in as User A (super admin) on API Manager', async () => {
+    await test.step('Log in as Powerful User 1 on API Manager', async () => {
       const apiManagerLogin = new ApiManagerLoginPage(userAPage);
       const oidcLogin = new OidcLoginPage(userAPage);
 
       await apiManagerLogin.goto();
-      await apiManagerLogin.selectProvider();
       await oidcLogin.waitForLoginPage();
-      await oidcLogin.login(env.SUPER_ADMIN_USERNAME, env.SUPER_ADMIN_PASSWORD);
-
-      // Wait for API Manager to load after login
-      await userAPage.waitForURL(`${env.API_MANAGER_BASE_URL}/**`, { timeout: 30_000 });
+      await oidcLogin.login(
+        env.POWERFUL_USER_1_USERNAME,
+        env.POWERFUL_USER_1_PASSWORD,
+        env.POWERFUL_USER_1_CREDENTIALS_PROVIDER,
+      );
     });
 
     // ── Step 5: User A grants CanReadMetrics to User B ─────────────

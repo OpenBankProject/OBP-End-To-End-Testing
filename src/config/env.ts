@@ -20,8 +20,11 @@ export const env = {
   OBP_PORTAL_BASE_URL: optional('OBP_PORTAL_BASE_URL', 'http://localhost:5174'),
   API_MANAGER_BASE_URL: optional('API_MANAGER_BASE_URL', 'http://localhost:3003'),
 
+  // OIDC software identifier — picked on the API Manager login page
+  // (e.g. "obp-oidc"). This selects WHICH OIDC provider implementation to delegate to.
+  OIDC_LOGIN_PROVIDER: optional('OIDC_LOGIN_PROVIDER', 'obp-oidc'),
+
   // OBP-OIDC login credentials (optional — only needed by tests that use default login)
-  OBP_LOGIN_PROVIDER: optional('OBP_LOGIN_PROVIDER', 'OBP-API'),
   OBP_LOGIN_USERNAME: optional('OBP_LOGIN_USERNAME', ''),
   OBP_LOGIN_PASSWORD: optional('OBP_LOGIN_PASSWORD', ''),
 
@@ -39,9 +42,12 @@ export const env = {
   VRP_MAX_YEARLY_FREQUENCY: optional('VRP_MAX_YEARLY_FREQUENCY', '100'),
   VRP_MAX_NUMBER_OF_HISTORICAL_CONSENTS_SHOWN: optional('VRP_MAX_NUMBER_OF_HISTORICAL_CONSENTS_SHOWN', '10'),
 
-  // Super Admin credentials (for entitlement granting tests)
-  SUPER_ADMIN_USERNAME: optional('SUPER_ADMIN_USERNAME', 'TheSuperUserAForTesting'),
-  SUPER_ADMIN_PASSWORD: optional('SUPER_ADMIN_PASSWORD', ''),
+  // Powerful user credentials (has entitlements to create banks, grant entitlements, etc.)
+  POWERFUL_USER_1_USERNAME: optional('POWERFUL_USER_1_USERNAME', 'TheSuperUserAForTesting'),
+  POWERFUL_USER_1_PASSWORD: optional('POWERFUL_USER_1_PASSWORD', ''),
+  // Credentials provider — picked from the dropdown on the OBP-OIDC login page.
+  // Identifies WHERE this user's credentials are stored (e.g. an OBP-API host URL).
+  POWERFUL_USER_1_CREDENTIALS_PROVIDER: optional('POWERFUL_USER_1_CREDENTIALS_PROVIDER', 'obp-oidc'),
 
   // Mailpit (email testing)
   MAILPIT_API_URL: optional('MAILPIT_API_URL', 'http://localhost:8025'),
