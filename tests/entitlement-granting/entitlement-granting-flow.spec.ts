@@ -20,23 +20,32 @@ function generateUniqueUser() {
 test.describe('Entitlement Granting Flow', () => {
   test('Powerful User 1 grants CanReadMetrics to User B', async ({
     registerPage,
+    emailValidationPage,
+    mailpit,
     browser,
   }) => {
     const userB = generateUniqueUser();
     let userBId: string | null = null;
 
     // ── Step 1: Register User B on Portal ──────────────────────────
-    await test.step('Register User B on OBP Portal', async () => {
+    await test.step('Register User B on OBP Portal and validate email', async () => {
+      await mailpit.deleteAllMessages();
       await registerPage.goto();
       await registerPage.fillRegistrationForm(userB);
       await registerPage.acceptLegalDocuments();
       await registerPage.submit();
       await registerPage.verifySuccess();
+
+      // OBP-OIDC only authenticates validated users
+      const message = await mailpit.waitForMessage(`to:${userB.email}`);
+      const token = mailpit.extractValidationToken(message.HTML || message.Text);
+      await emailValidationPage.validateToken(token);
+      await emailValidationPage.verifySuccess();
     });
 
     // ── Step 2: Log in as User B on API Manager → capture user_id ──
-    const userBContext = await browser.newContext();
-    const userBPage = await userBContext.newPage();
+    let userBContext = await browser.newContext();
+    let userBPage = await userBContext.newPage();
 
     await test.step('Log in as User B on API Manager and capture user_id', async () => {
       const apiManagerLogin = new ApiManagerLoginPage(userBPage);
@@ -45,7 +54,7 @@ test.describe('Entitlement Granting Flow', () => {
 
       await apiManagerLogin.goto();
       await oidcLogin.waitForLoginPage();
-      await oidcLogin.login(userB.username, userB.password);
+      await oidcLogin.login(userB.username, userB.password, env.REGISTERED_USER_CREDENTIALS_PROVIDER);
 
       // Navigate to profile to capture user_id
       await profilePage.goto();
@@ -97,6 +106,22 @@ test.describe('Entitlement Granting Flow', () => {
     });
 
     // ── Step 6: User B verifies metrics page access ────────────────
+    // API Manager keeps the user's entitlements as a login-time snapshot in
+    // the session and only refreshes it once it is older than 4 minutes, so
+    // User B logs in afresh to pick up the newly granted role.
+    await userBContext.close();
+    userBContext = await browser.newContext();
+    userBPage = await userBContext.newPage();
+
+    await test.step('User B logs in again to pick up the new entitlement', async () => {
+      const apiManagerLogin = new ApiManagerLoginPage(userBPage);
+      const oidcLogin = new OidcLoginPage(userBPage);
+
+      await apiManagerLogin.goto();
+      await oidcLogin.waitForLoginPage();
+      await oidcLogin.login(userB.username, userB.password, env.REGISTERED_USER_CREDENTIALS_PROVIDER);
+    });
+
     await test.step('Verify User B can now access metrics page', async () => {
       const metricsPage = new MetricsPage(userBPage);
       await metricsPage.goto();

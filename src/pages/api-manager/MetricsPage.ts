@@ -14,7 +14,7 @@ export class MetricsPage extends BasePage {
   private tipBox = this.page.locator('.tip-box');
 
   // Metrics page content (shown when user has required role)
-  private queryMetricsHeading = this.page.locator('h1, h2, h3, h4', { hasText: 'Query Metrics' });
+  private queryMetricsHeading = this.page.locator('h2.panel-title', { hasText: 'Metrics Query' });
   private optionalRoleNote = this.page.locator('.optional-role-note');
 
   constructor(page: Page) {

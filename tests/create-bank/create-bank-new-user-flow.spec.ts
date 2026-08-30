@@ -90,7 +90,7 @@ test.describe('Create Bank - New User Flow (OBP-OIDC)', () => {
 
       await userLogin.goto();
       await userOidc.waitForLoginPage();
-      await userOidc.login(user.username, user.password);
+      await userOidc.login(user.username, user.password, env.REGISTERED_USER_CREDENTIALS_PROVIDER);
     });
 
     await test.step('New user creates a bank', async () => {

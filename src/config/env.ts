@@ -49,6 +49,11 @@ export const env = {
   // Identifies WHERE this user's credentials are stored (e.g. an OBP-API host URL).
   POWERFUL_USER_1_CREDENTIALS_PROVIDER: optional('POWERFUL_USER_1_CREDENTIALS_PROVIDER', 'obp-oidc'),
 
+  // Credentials provider for users the tests register via Portal /register.
+  // Portal creates them in OBP-API, so this is the OBP-API host as it appears
+  // in the OBP-OIDC provider dropdown (matched as a case-insensitive substring).
+  REGISTERED_USER_CREDENTIALS_PROVIDER: optional('REGISTERED_USER_CREDENTIALS_PROVIDER', 'http://127.0.0.1:8080'),
+
   // Mailpit (email testing)
   MAILPIT_API_URL: optional('MAILPIT_API_URL', 'http://localhost:8025'),
 

@@ -10,26 +10,13 @@ export class ApiManagerLoginPage extends BasePage {
   async goto(provider = env.OIDC_LOGIN_PROVIDER) {
     await this.navigateTo(`${env.API_MANAGER_BASE_URL}/login`);
 
-    // If only one provider is configured, API Manager auto-redirects (server-
-    // or client-side) to the provider's auth page — no picker is shown. Race
-    // the picker link against navigation away from /login: whichever happens
-    // first wins.
-    const providerLink = this.page.locator(`a[href="/login/${provider}"]`);
-    const navigatedAway = this.page
-      .waitForURL(url => !url.pathname.includes('/login'), { timeout: 5_000 })
-      .then(() => 'navigated' as const)
-      .catch(() => null);
-    const linkAppeared = providerLink
-      .waitFor({ state: 'visible', timeout: 5_000 })
-      .then(() => 'picker' as const)
-      .catch(() => null);
+    // Single-provider installs auto-redirect past /login to the provider's
+    // auth page; multi-provider installs render a picker. If we're still on
+    // /login after navigation settles, click the picker; otherwise the
+    // redirect already happened and there's nothing to do.
+    if (!new URL(this.page.url()).pathname.startsWith('/login')) return;
 
-    const winner = await Promise.race([navigatedAway, linkAppeared]);
-    if (winner === 'picker') {
-      await providerLink.click();
-    }
-    // If neither resolved, fall through — caller will likely fail at the next
-    // step with a clearer error than a silent hang here.
+    await this.page.locator(`a[href="/login/${provider}"]`).click();
   }
 
   async selectProvider(provider = env.OIDC_LOGIN_PROVIDER) {

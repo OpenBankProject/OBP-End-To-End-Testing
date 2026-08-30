@@ -18,11 +18,39 @@ export class OidcLoginPage extends BasePage {
     await this.waitForUrlContaining('/obp-oidc/auth');
   }
 
+  /**
+   * Log in and wait for OBP-OIDC to redirect away from the login page.
+   * Throws if the login page is still showing after the click (e.g. bad credentials).
+   */
   async login(
     username = env.OBP_LOGIN_USERNAME,
     password = env.OBP_LOGIN_PASSWORD,
     credentialsProvider = env.OIDC_LOGIN_PROVIDER,
   ) {
+    await this.fillCredentials(username, password, credentialsProvider);
+
+    await Promise.all([
+      this.page.waitForURL(url => !url.pathname.includes('/obp-oidc/auth'), { timeout: 5_000 }),
+      this.signInButton.click(),
+    ]);
+  }
+
+  /**
+   * Submit credentials that are expected to be rejected, and wait for the
+   * login page to re-render with its error box. Returns the error text.
+   */
+  async loginExpectingFailure(
+    username: string,
+    password: string,
+    credentialsProvider = env.OIDC_LOGIN_PROVIDER,
+  ): Promise<string> {
+    await this.fillCredentials(username, password, credentialsProvider);
+    await this.signInButton.click();
+    await this.errorMessage.waitFor({ state: 'visible', timeout: 10_000 });
+    return (await this.errorMessage.textContent())?.trim() ?? '';
+  }
+
+  private async fillCredentials(username: string, password: string, credentialsProvider: string) {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
 
@@ -48,11 +76,6 @@ export class OidcLoginPage extends BasePage {
         );
       }
     }
-
-    await Promise.all([
-      this.page.waitForURL(url => !url.pathname.includes('/obp-oidc/auth'), { timeout: 5_000 }),
-      this.signInButton.click(),
-    ]);
   }
 
   async hasError(): Promise<boolean> {
@@ -60,6 +83,6 @@ export class OidcLoginPage extends BasePage {
   }
 
   async getErrorText(): Promise<string> {
-    return this.errorMessage.textContent() ?? '';
+    return (await this.errorMessage.textContent())?.trim() ?? '';
   }
 }

@@ -11,6 +11,10 @@ import { MetricsPage } from '../pages/api-manager/MetricsPage.js';
 import { ProfilePage } from '../pages/api-manager/ProfilePage.js';
 import { CreateEntitlementPage } from '../pages/api-manager/CreateEntitlementPage.js';
 import { CreateBankPage } from '../pages/api-manager/CreateBankPage.js';
+import { DynamicEntityCreatePage } from '../pages/api-manager/DynamicEntityCreatePage.js';
+import { DynamicEntitiesListPage } from '../pages/api-manager/DynamicEntitiesListPage.js';
+import { DynamicEntityDetailPage } from '../pages/api-manager/DynamicEntityDetailPage.js';
+import { DynamicEntityCrudPage } from '../pages/api-manager/DynamicEntityCrudPage.js';
 import { EmailValidationPage } from '../pages/portal/EmailValidationPage.js';
 import { ForgotPasswordPage } from '../pages/portal/ForgotPasswordPage.js';
 import { ResetPasswordPage } from '../pages/portal/ResetPasswordPage.js';
@@ -29,6 +33,10 @@ type TestFixtures = {
   profilePage: ProfilePage;
   createEntitlementPage: CreateEntitlementPage;
   createBankPage: CreateBankPage;
+  dynamicEntityCreatePage: DynamicEntityCreatePage;
+  dynamicEntitiesListPage: DynamicEntitiesListPage;
+  dynamicEntityDetailPage: DynamicEntityDetailPage;
+  dynamicEntityCrudPage: DynamicEntityCrudPage;
   emailValidationPage: EmailValidationPage;
   forgotPasswordPage: ForgotPasswordPage;
   resetPasswordPage: ResetPasswordPage;
@@ -71,6 +79,18 @@ export const test = base.extend<TestFixtures>({
   },
   createBankPage: async ({ page }, use) => {
     await use(new CreateBankPage(page));
+  },
+  dynamicEntityCreatePage: async ({ page }, use) => {
+    await use(new DynamicEntityCreatePage(page));
+  },
+  dynamicEntitiesListPage: async ({ page }, use) => {
+    await use(new DynamicEntitiesListPage(page));
+  },
+  dynamicEntityDetailPage: async ({ page }, use) => {
+    await use(new DynamicEntityDetailPage(page));
+  },
+  dynamicEntityCrudPage: async ({ page }, use) => {
+    await use(new DynamicEntityCrudPage(page));
   },
   emailValidationPage: async ({ page }, use) => {
     await use(new EmailValidationPage(page));

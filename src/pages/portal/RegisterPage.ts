@@ -7,6 +7,7 @@ export class RegisterPage extends BasePage {
   private lastNameInput = this.page.locator('input[name="last_name"]');
   private emailInput = this.page.locator('input[name="email"]');
   private usernameInput = this.page.locator('input[name="username"]');
+  private mobilePhoneNumberInput = this.page.locator('input[name="mobile_phone_number"]');
   private passwordInput = this.page.locator('input[name="password"]');
   private repeatPasswordInput = this.page.locator('input[name="repeat_password"]');
   private submitButton = this.page.locator('[data-testid="submit-registration"]');
@@ -26,11 +27,16 @@ export class RegisterPage extends BasePage {
     email: string;
     username: string;
     password: string;
+    /** Optional (v7.0.0 Create User); left untouched when omitted */
+    mobilePhoneNumber?: string;
   }) {
     await this.firstNameInput.fill(user.firstName);
     await this.lastNameInput.fill(user.lastName);
     await this.emailInput.fill(user.email);
     await this.usernameInput.fill(user.username);
+    if (user.mobilePhoneNumber) {
+      await this.mobilePhoneNumberInput.fill(user.mobilePhoneNumber);
+    }
     await this.passwordInput.fill(user.password);
     await this.repeatPasswordInput.fill(user.password);
   }
@@ -69,5 +75,18 @@ export class RegisterPage extends BasePage {
 
   async hasError(): Promise<boolean> {
     return this.errorMessage.isVisible();
+  }
+
+  async getErrorText(): Promise<string> {
+    return (await this.errorMessage.textContent())?.trim() ?? '';
+  }
+
+  /**
+   * True when the browser's built-in validation rejects the typed mobile phone
+   * number (the input carries an HTML `pattern`), which blocks form submission
+   * before anything reaches the server.
+   */
+  async isMobilePhoneNumberRejectedByBrowser(): Promise<boolean> {
+    return this.mobilePhoneNumberInput.evaluate(el => (el as HTMLInputElement).validity.patternMismatch);
   }
 }

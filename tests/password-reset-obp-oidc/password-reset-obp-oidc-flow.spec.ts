@@ -1,4 +1,7 @@
 import { test, expect } from '../../src/fixtures/test-fixtures.js';
+import { env } from '../../src/config/env.js';
+
+const PROVIDER = env.REGISTERED_USER_CREDENTIALS_PROVIDER;
 
 function generateUniqueUser() {
   const suffix = `${Date.now()}${Math.random().toString(36).slice(2, 7)}`;
@@ -17,9 +20,9 @@ test.describe('Password Reset Flow (OBP-OIDC)', () => {
     emailValidationPage,
     forgotPasswordPage,
     resetPasswordPage,
+    portalLoginPage,
     oidcLoginPage,
     mailpit,
-    page,
   }) => {
     const user = generateUniqueUser();
     const newPassword = 'NewSecurePass@789!';
@@ -60,8 +63,12 @@ test.describe('Password Reset Flow (OBP-OIDC)', () => {
     });
 
     await test.step('Log in with new password', async () => {
-      // After reset, Portal redirects to /login which auto-redirects to OIDC
-      await oidcLoginPage.login(user.username, newPassword);
+      // After reset, Portal lands on /login?reset=success. The success banner
+      // suppresses the single-provider auto-redirect, so pick the provider
+      // explicitly to reach the OBP-OIDC sign-in page.
+      await portalLoginPage.selectProvider();
+      await oidcLoginPage.waitForLoginPage();
+      await oidcLoginPage.login(user.username, newPassword, PROVIDER);
     });
   });
 
@@ -113,9 +120,8 @@ test.describe('Password Reset Flow (OBP-OIDC)', () => {
     await test.step('Attempt login with old password (should fail)', async () => {
       await portalLoginPage.goto();
       await oidcLoginPage.waitForLoginPage();
-      await oidcLoginPage.login(user.username, user.password);
-      const hasError = await oidcLoginPage.hasError();
-      expect(hasError).toBe(true);
+      const error = await oidcLoginPage.loginExpectingFailure(user.username, user.password, PROVIDER);
+      expect(error).toContain('Incorrect username/password');
     });
   });
 });
