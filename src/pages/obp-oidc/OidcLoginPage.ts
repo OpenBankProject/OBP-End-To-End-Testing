@@ -1,25 +1,37 @@
 import { type Page } from '@playwright/test';
 import { BasePage } from '../BasePage.js';
-import { env } from '../../config/env.js';
+import { env, idp } from '../../config/env.js';
 
+/** The login page of the selected IdP: OBP-OIDC's, or Keycloak's, which uses the same field ids. */
 export class OidcLoginPage extends BasePage {
   private usernameInput = this.page.locator('#username');
   private passwordInput = this.page.locator('#password');
   private providerSelect = this.page.locator('#provider');
   private providerHidden = this.page.locator('input[name="provider"][type="hidden"]');
   private signInButton = this.page.locator('button[type="submit"]');
-  private errorMessage = this.page.locator('.error');
+  // OBP-OIDC's error box, or Keycloak's message under the fields (default theme, or the OBP theme).
+  private errorMessage = this.page.locator('.error, #input-error, .obp-error-message').first();
 
   constructor(page: Page) {
     super(page);
   }
 
   async waitForLoginPage() {
-    await this.waitForUrlContaining('/obp-oidc/auth');
+    // Portal redirects straight to the IdP only when it offers a single provider. With more than one (e.g. OBP-OIDC
+    // and Keycloak) it shows a choice instead: pick the selected IdP there.
+    // The redirect is given 5 s first, so a page still navigating away from a link just clicked is not clicked again.
+    const redirected = await this.page.waitForURL(idp.loginPage, { timeout: 5_000 }).then(() => true, () => false);
+    if (!redirected) {
+      const choice = this.page.locator(`a[href="/login/${env.OIDC_LOGIN_PROVIDER}"]`).first();
+      if (await choice.isVisible()) {
+        await choice.click();
+      }
+    }
+    await this.page.waitForURL(idp.loginPage, { timeout: 5_000 });
   }
 
   /**
-   * Log in and wait for OBP-OIDC to redirect away from the login page.
+   * Log in and wait for the IdP to redirect away from its login page.
    * Throws if the login page is still showing after the click (e.g. bad credentials).
    */
   async login(
@@ -30,7 +42,7 @@ export class OidcLoginPage extends BasePage {
     await this.fillCredentials(username, password, credentialsProvider);
 
     await Promise.all([
-      this.page.waitForURL(url => !url.pathname.includes('/obp-oidc/auth'), { timeout: 5_000 }),
+      this.page.waitForURL(url => !idp.loginPage.test(url.pathname), { timeout: 5_000 }),
       this.signInButton.click(),
     ]);
   }
@@ -57,6 +69,7 @@ export class OidcLoginPage extends BasePage {
     // The credentials-provider dropdown identifies WHERE this user's credentials
     // are stored (e.g. an OBP-API host URL). Labels are typically full URLs, so we
     // match `credentialsProvider` as a case-insensitive substring of the label.
+    // Keycloak's form has no such dropdown: its user-storage provider serves one OBP-API.
     const selectVisible = await this.providerSelect.isVisible();
     if (selectVisible) {
       const options = (await this.providerSelect.locator('option').allTextContents()).map(o => o.trim());
