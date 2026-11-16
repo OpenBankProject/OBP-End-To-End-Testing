@@ -19,6 +19,19 @@ export const env = {
   HOLA_BASE_URL: optional('HOLA_BASE_URL', 'http://localhost:8087'),
   OBP_PORTAL_BASE_URL: optional('OBP_PORTAL_BASE_URL', 'http://localhost:5174'),
   API_MANAGER_BASE_URL: optional('API_MANAGER_BASE_URL', 'http://localhost:3003'),
+  COHORT_BASE_URL: optional('COHORT_BASE_URL', 'http://localhost:5183'),
+
+  // OBP-API, for the tests that set up and remove their own data through its REST API,
+  // and the consumer key they log in with (DirectLogin).
+  OBP_API_BASE_URL: optional('OBP_API_BASE_URL', 'http://localhost:8080'),
+  OBP_CONSUMER_KEY: optional('OBP_CONSUMER_KEY', ''),
+
+  // The bank (space) Cohort keeps its records in.
+  COHORT_SPACE_ID: optional('COHORT_SPACE_ID', 'cohort'),
+
+  // The user who applies in the Cohort tests. Unset, Powerful User 1 applies as well as acting as staff.
+  COHORT_APPLICANT_USERNAME: optional('COHORT_APPLICANT_USERNAME', ''),
+  COHORT_APPLICANT_PASSWORD: optional('COHORT_APPLICANT_PASSWORD', ''),
 
   // OIDC software identifier — picked on the API Manager login page
   // (e.g. "obp-oidc"). This selects WHICH OIDC provider implementation to delegate to.

@@ -18,6 +18,10 @@ import { DynamicEntityCrudPage } from '../pages/api-manager/DynamicEntityCrudPag
 import { EmailValidationPage } from '../pages/portal/EmailValidationPage.js';
 import { ForgotPasswordPage } from '../pages/portal/ForgotPasswordPage.js';
 import { ResetPasswordPage } from '../pages/portal/ResetPasswordPage.js';
+import { CohortHomePage } from '../pages/cohort/CohortHomePage.js';
+import { CohortCallPage } from '../pages/cohort/CohortCallPage.js';
+import { CohortApplicationPage } from '../pages/cohort/CohortApplicationPage.js';
+import { CohortStaffApplicationsPage } from '../pages/cohort/CohortStaffApplicationsPage.js';
 import { MailpitClient } from '../helpers/MailpitClient.js';
 
 type TestFixtures = {
@@ -40,6 +44,10 @@ type TestFixtures = {
   emailValidationPage: EmailValidationPage;
   forgotPasswordPage: ForgotPasswordPage;
   resetPasswordPage: ResetPasswordPage;
+  cohortHomePage: CohortHomePage;
+  cohortCallPage: CohortCallPage;
+  cohortApplicationPage: CohortApplicationPage;
+  cohortStaffApplicationsPage: CohortStaffApplicationsPage;
   mailpit: MailpitClient;
 };
 
@@ -100,6 +108,18 @@ export const test = base.extend<TestFixtures>({
   },
   resetPasswordPage: async ({ page }, use) => {
     await use(new ResetPasswordPage(page));
+  },
+  cohortHomePage: async ({ page }, use) => {
+    await use(new CohortHomePage(page));
+  },
+  cohortCallPage: async ({ page }, use) => {
+    await use(new CohortCallPage(page));
+  },
+  cohortApplicationPage: async ({ page }, use) => {
+    await use(new CohortApplicationPage(page));
+  },
+  cohortStaffApplicationsPage: async ({ page }, use) => {
+    await use(new CohortStaffApplicationsPage(page));
   },
   mailpit: async ({}, use) => {
     await use(new MailpitClient());
