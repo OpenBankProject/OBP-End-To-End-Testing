@@ -120,12 +120,14 @@ src/
   config/env.ts          - Environment variable loader
   helpers/
     MailpitClient.ts     - Mailpit REST API client for email retrieval
+    CohortApi.ts         - OBP-API calls the Cohort test sets up and cleans up with
   pages/
     BasePage.ts          - Shared base page class
     hola/                - Hola app page objects
     obp-oidc/            - OBP-OIDC login page object
     portal/              - OBP-Portal page objects (register, login, email validation)
     api-manager/         - API Manager page objects
+    cohort/              - OBP-Cohort page objects (home, call, application, staff screening)
   fixtures/
     test-fixtures.ts     - Custom Playwright fixtures
 tests/
@@ -133,6 +135,7 @@ tests/
   password-reset-obp-oidc/  - Password reset via email, login via OBP-OIDC
   entitlement-granting/     - Super admin entitlement granting tests
   vrp/                      - VRP consent creation tests
+  cohort/                   - Cohort application lifecycle, with cleanup
 ```
 
 ## Test flows
@@ -170,3 +173,14 @@ tests/
 2. Verify User B lacks CanReadMetrics entitlement
 3. Super admin (User A) grants CanReadMetrics to User B
 4. Verify User B can now access the metrics page
+
+### Cohort application lifecycle
+
+1. Staff (Powerful User 1) create a programme and an open call through OBP-API
+2. A visitor sees the call on Cohort's home page and is asked to sign in when applying
+3. The applicant signs in, applies (giving their details the first time), is told what is missing, saves a draft and submits
+4. Staff open the submitted application and shortlist it with a private reason and a message
+5. The applicant reads the message and never the private reason
+6. Cleanup, always: delete the screening decisions, applications, call, programme and the applicant's Customer, then read the space back and fail on anything of the run left
+
+Set `COHORT_BASE_URL`, `OBP_API_BASE_URL`, `OBP_CONSUMER_KEY` (a consumer key Powerful User 1 can DirectLogin with) and `COHORT_SPACE_ID`. `COHORT_APPLICANT_USERNAME` / `COHORT_APPLICANT_PASSWORD` name a second user who applies; unset, Powerful User 1 applies too. Powerful User 1 needs Create Entitlement at the Cohort space, so the run can grant itself the delete Roles it needs, and OBP-API needs `allow_cascade_delete=true` for the Customer to be deleted.
